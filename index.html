@@ -127,6 +127,34 @@
     L.marker([40.417, -86.875]).addTo(map)
       .bindPopup('📍 Tippecanoe County')
       .openPopup();
+    // Simulated community events for Tippecanoe County
+const eventItems = [
+  {
+    title: "🌽 Lafayette Farmers Market – Every Saturday 8AM–12PM",
+    link: "https://www.lafayettefarmersmarket.com"
+  },
+  {
+    title: "🎶 Summer Concert Series @ Columbian Park – July 20",
+    link: "https://www.lafayette.in.gov/activities/concert-series"
+  },
+  {
+    title: "🎨 Art on the Wabash Festival – Aug 10",
+    link: "https://www.artonthewabash.com"
+  },
+  {
+    title: "🚴‍♂️ County Trail Cleanup Day – July 27",
+    link: "https://www.tippecanoeco.org/trails"
+  },
+  {
+    title: "🎓 Purdue Welcome Week – Aug 18–25",
+    link: "https://www.purdue.edu/welcome"
+  }
+];
+
+const eventsSection = document.getElementById('events');
+eventsSection.innerHTML = '<h2>🎉 Community Events</h2><ul>' +
+  eventItems.map(item => `<li><a href="${item.link}" target="_blank">${item.title}</a></li>`).join('') +
+  '</ul>';
   </script>
 </body>
 </html>
