@@ -1,1 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Local Vibes Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 40px;
+      text-align: center;
+      background: linear-gradient(to right, #e3f2fd, #fce4ec);
+      background-size: cover;
+    }
+
+    h1 {
+      color: #4a148c;
+      font-size: 2.5em;
+      margin-bottom: 20px;
+    }
+
+    section {
+      margin: 40px auto;
+      max-width: 800px;
+      background: #fff;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+
+    #clock, #weather, #events, #news {
+      font-size: 1.3em;
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    #map {
+      height: 300px;
+      border-radius: 8px;
+    }
+
+    footer {
+      margin-top: 60px;
+      font-size: 0.9em;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+  <h1>📍 Tippecanoe County: Local Vibes Dashboard</h1>
+
+  <section>
+    <div id="clock">Loading Tippecanoe County time... 🕒</div>
+    <div id="weather">Fetching weather data... 🌦️</div>
+  </section>
+
+  <section id="news">
+    <h2>📰 Local News</h2>
+    <p>Coming soon: Tippecanoe headlines and updates!</p>
+  </section>
+
+  <section id="events">
+    <h2>🎉 Community Events</h2>
+    <p>We'll plug in real events and calendars right here.</p>
+  </section>
+
+  <section>
+    <h2>🗺️ Tippecanoe County Map</h2>
+    <div id="map"></div>
+  </section>
+
+  <footer>
+    Built with pride by Rudy 💡
+  </footer>
+
+  <script>
+    // Tippecanoe Time (ET)
+    function updateClock() {
+      const now = new Date();
+      const formatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'America/Indiana/Indianapolis',
+        weekday: 'long',
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric',
+        hour12: true
+      });
+      const timeString = formatter.format(now);
+      document.getElementById('clock').innerText = `⏰ Tippecanoe County time (ET): ${timeString}`;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Weather fetch using OpenWeather API
+    const proxyURL = "https://api.allorigins.win/get?url=" +
+      encodeURIComponent("https://api.openweathermap.org/data/2.5/weather?q=Tippecanoe,US&units=imperial&appid=6215e823481b660e0cba462747d778b1");
+
+    fetch(proxyURL)
+      .then(response => response.json())
+      .then(data => {
+        const parsed = JSON.parse(data.contents);
+        const temp = Math.round(parsed.main.temp);
+        const condition = parsed.weather[0].main;
+        const emoji = condition === "Rain" ? "🌧️" :
+                      condition === "Clear" ? "☀️" :
+                      condition === "Clouds" ? "☁️" :
+                      condition === "Snow" ? "❄️" :
+                      condition === "Thunderstorm" ? "⛈️" :
+                      condition === "Drizzle" ? "🌦️" : "🌈";
+        document.getElementById("weather").innerText =
+          `🌦️ Weather in Tippecanoe County: ${emoji} ${temp}°F and ${condition}`;
+      })
+      .catch(error => {
+        document.getElementById("weather").innerText =
+          "Weather fetch failed ❌";
+        console.error("Weather error:", error);
+      });
+
+    // Map centered on Tippecanoe County
+    const map = L.map('map').setView([40.417, -86.875], 10);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+    L.marker([40.417, -86.875]).addTo(map)
+      .bindPopup('📍 Tippecanoe County')
+      .openPopup();
+  </script>
+</body>
+</html>
+
 
