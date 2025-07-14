@@ -12,12 +12,11 @@
       margin: 0;
       padding: 40px;
       text-align: center;
-      background: linear-gradient(to right, #e3f2fd, #fce4ec);
-      background-size: cover;
+      background: linear-gradient(to right, #f5f7fa, #e1f5fe);
     }
 
     h1 {
-      color: #4a148c;
+      color: #2c387e;
       font-size: 2.5em;
       margin-bottom: 20px;
     }
@@ -31,15 +30,38 @@
       box-shadow: 0 8px 20px rgba(0,0,0,0.1);
     }
 
-    #clock, #weather, #events, #news {
+    #clock, #weather {
       font-size: 1.3em;
       margin-bottom: 10px;
       color: #333;
     }
 
+    h2 {
+      color: #1976d2;
+    }
+
+    ul {
+      list-style-type: none;
+      padding-left: 0;
+    }
+
+    ul li {
+      margin: 8px 0;
+    }
+
+    ul li a {
+      text-decoration: none;
+      color: #333;
+    }
+
+    ul li a:hover {
+      color: #00796b;
+    }
+
     #map {
       height: 300px;
       border-radius: 8px;
+      margin-top: 20px;
     }
 
     footer {
@@ -58,13 +80,13 @@
   </section>
 
   <section id="news">
-    <h2>📰 Local News</h2>
-    <p>Coming soon: Tippecanoe headlines and updates!</p>
+    <h2>📰 Tippecanoe News</h2>
+    <p>Loading headlines...</p>
   </section>
 
   <section id="events">
     <h2>🎉 Community Events</h2>
-    <p>We'll plug in real events and calendars right here.</p>
+    <p>Loading upcoming events...</p>
   </section>
 
   <section>
@@ -73,11 +95,11 @@
   </section>
 
   <footer>
-    Built with pride by Rudy 💡
+    Built by Rudy with local pride 💡
   </footer>
 
   <script>
-    // Tippecanoe Time (ET)
+    // 🕒 Tippecanoe Time (ET)
     function updateClock() {
       const now = new Date();
       const formatter = new Intl.DateTimeFormat('en-US', {
@@ -88,13 +110,12 @@
         second: 'numeric',
         hour12: true
       });
-      const timeString = formatter.format(now);
-      document.getElementById('clock').innerText = `⏰ Tippecanoe County time (ET): ${timeString}`;
+      document.getElementById('clock').innerText = `⏰ Tippecanoe County time (ET): ${formatter.format(now)}`;
     }
     setInterval(updateClock, 1000);
     updateClock();
 
-    // Weather fetch using OpenWeather API
+    // 🌦️ Weather via OpenWeather API (using proxy)
     const proxyURL = "https://api.allorigins.win/get?url=" +
       encodeURIComponent("https://api.openweathermap.org/data/2.5/weather?q=Tippecanoe,US&units=imperial&appid=6215e823481b660e0cba462747d778b1");
 
@@ -104,22 +125,67 @@
         const parsed = JSON.parse(data.contents);
         const temp = Math.round(parsed.main.temp);
         const condition = parsed.weather[0].main;
-        const emoji = condition === "Rain" ? "🌧️" :
-                      condition === "Clear" ? "☀️" :
-                      condition === "Clouds" ? "☁️" :
-                      condition === "Snow" ? "❄️" :
-                      condition === "Thunderstorm" ? "⛈️" :
-                      condition === "Drizzle" ? "🌦️" : "🌈";
+        const emoji = {
+          Rain: "🌧️", Clear: "☀️", Clouds: "☁️",
+          Snow: "❄️", Thunderstorm: "⛈️", Drizzle: "🌦️"
+        }[condition] || "🌈";
         document.getElementById("weather").innerText =
           `🌦️ Weather in Tippecanoe County: ${emoji} ${temp}°F and ${condition}`;
       })
       .catch(error => {
-        document.getElementById("weather").innerText =
-          "Weather fetch failed ❌";
+        document.getElementById("weather").innerText = "Weather fetch failed ❌";
         console.error("Weather error:", error);
       });
 
-    // Map centered on Tippecanoe County
+    // 📰 Simulated news headlines
+    const newsItems = [
+      {
+        title: "Downtown Lafayette hosts summer art walk 🎨",
+        link: "https://www.artlafayette.org/calendar"
+      },
+      {
+        title: "Tippecanoe County explores new park plans 🌳",
+        link: "https://www.wlfi.com"
+      },
+      {
+        title: "Purdue startups expand across Greater Lafayette 🚀",
+        link: "https://www.purdue.edu/newsroom/"
+      }
+    ];
+    const newsSection = document.getElementById('news');
+    newsSection.innerHTML = '<h2>📰 Tippecanoe News</h2><ul>' +
+      newsItems.map(item => `<li><a href="${item.link}" target="_blank">${item.title}</a></li>`).join('') +
+      '</ul>';
+
+    // 🎉 Curated community events
+    const eventItems = [
+      {
+        title: "🌽 Lafayette Farmers Market – Saturdays 8AM–12:30PM",
+        link: "https://www.homeofpurdue.com/events/recurring-events/farmers-markets/"
+      },
+      {
+        title: "🎨 Art on the Wabash Festival – Sept 28",
+        link: "https://www.artlafayette.org/calendar"
+      },
+      {
+        title: "🎶 Downtown Blues and Jazz Festival – July 19",
+        link: "https://www.americantowns.com/event/downtown-blues-and-jazz-festival-2025-07-19-lafayette-in.html"
+      },
+      {
+        title: "🎡 Tippecanoe County 4-H Fair – July 18–20",
+        link: "https://tippecanoecountyfairgrounds.com/upcoming-events/"
+      },
+      {
+        title: "🎓 Purdue Welcome Week – Aug 18–25",
+        link: "https://events.purdue.edu/"
+      }
+    ];
+    const eventsSection = document.getElementById('events');
+    eventsSection.innerHTML = '<h2>🎉 Community Events</h2><ul>' +
+      eventItems.map(item => `<li><a href="${item.link}" target="_blank">${item.title}</a></li>`).join('') +
+      '</ul>';
+
+    // 🗺️ Map centered on Tippecanoe County
     const map = L.map('map').setView([40.417, -86.875], 10);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap contributors'
@@ -127,36 +193,10 @@
     L.marker([40.417, -86.875]).addTo(map)
       .bindPopup('📍 Tippecanoe County')
       .openPopup();
-    // Simulated community events for Tippecanoe County
-const eventItems = [
-  {
-    title: "🌽 Lafayette Farmers Market – Every Saturday 8AM–12PM",
-    link: "https://www.lafayettefarmersmarket.com"
-  },
-  {
-    title: "🎶 Summer Concert Series @ Columbian Park – July 20",
-    link: "https://www.lafayette.in.gov/activities/concert-series"
-  },
-  {
-    title: "🎨 Art on the Wabash Festival – Aug 10",
-    link: "https://www.artonthewabash.com"
-  },
-  {
-    title: "🚴‍♂️ County Trail Cleanup Day – July 27",
-    link: "https://www.tippecanoeco.org/trails"
-  },
-  {
-    title: "🎓 Purdue Welcome Week – Aug 18–25",
-    link: "https://www.purdue.edu/welcome"
-  }
-];
-
-const eventsSection = document.getElementById('events');
-eventsSection.innerHTML = '<h2>🎉 Community Events</h2><ul>' +
-  eventItems.map(item => `<li><a href="${item.link}" target="_blank">${item.title}</a></li>`).join('') +
-  '</ul>';
   </script>
 </body>
 </html>
+
+
 
 
